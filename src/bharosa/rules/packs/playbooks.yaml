@@ -1,0 +1,365 @@
+# Scam playbook pack, evaluated by bharosa.checks.playbook.
+# A playbook fires on a COMBINATION of signals, never on one keyword alone.
+# Keywords: English, Hindi (Devanagari and romanised) and Kannada. Matching is case-insensitive;
+# Latin keywords match on word boundaries, Devanagari and Kannada keywords match as substrings.
+version: "playbook-2026.11.1"
+
+signals:
+  authority:
+    - cbi
+    - police
+    - cyber cell
+    - cyber crime
+    - crime branch
+    - narcotics
+    - ncb
+    - enforcement directorate
+    - "ed officer"
+    - customs
+    - income tax
+    - rbi
+    - reserve bank
+    - trai
+    - court
+    - judge
+    - magistrate
+    - officer
+    - inspector
+    - government
+    - ministry
+    - bank manager
+    - head office
+    - telecom department
+    - "पुलिस"
+    - "सीबीआई"
+    - "अधिकारी"
+    - "कोर्ट"
+    - "सरकार"
+    - "आयकर"
+    - "ಪೊಲೀಸ್"
+    - "ಸಿಬಿಐ"
+    - "ಅಧಿಕಾರಿ"
+    - "ನ್ಯಾಯಾಲಯ"
+    - "ಸರ್ಕಾರ"
+  threat:
+    - arrest
+    - arrested
+    - digital arrest
+    - warrant
+    - case registered
+    - fir
+    - jail
+    - legal action
+    - money laundering
+    - drugs
+    - illegal
+    - seized
+    - blocked
+    - block
+    - suspended
+    - deactivated
+    - disconnected
+    - cut off
+    - penalty
+    - fine
+    - "गिरफ्तार"
+    - "गिरफ़्तार"
+    - "वारंट"
+    - "जेल"
+    - "कानूनी कार्रवाई"
+    - "बंद"
+    - "giraftar"
+    - "jail"
+    - "band ho jayega"
+    - "ಬಂಧನ"
+    - "ಜೈಲು"
+    - "ವಾರಂಟ್"
+    - "ಸ್ಥಗಿತ"
+    - "ಕಡಿತ"
+  urgency:
+    - urgent
+    - urgently
+    - immediately
+    - right now
+    - within 24 hours
+    - within 2 hours
+    - within 30 minutes
+    - today
+    - tonight
+    - last chance
+    - last warning
+    - final notice
+    - expire
+    - expires
+    - expired
+    - "तुरंत"
+    - "अभी"
+    - "आज ही"
+    - "जल्दी"
+    - "turant"
+    - "abhi"
+    - "jaldi"
+    - "ತಕ್ಷಣ"
+    - "ಈಗಲೇ"
+    - "ಇಂದೇ"
+  secrecy:
+    - do not tell
+    - don't tell
+    - dont tell
+    - tell no one
+    - keep this confidential
+    - confidential
+    - secret
+    - do not disconnect
+    - don't disconnect
+    - stay on the call
+    - stay on video call
+    - do not inform
+    - "किसी को मत बताना"
+    - "किसी को न बताएं"
+    - "गोपनीय"
+    - "kisi ko mat batana"
+    - "kisi ko mat bolna"
+    - "ಯಾರಿಗೂ ಹೇಳಬೇಡಿ"
+    - "ಗೌಪ್ಯ"
+  payment:
+    - transfer
+    - pay
+    - payment
+    - deposit
+    - send money
+    - send rs
+    - rs.
+    - rupees
+    - "₹"
+    - upi
+    - account number
+    - safe account
+    - verification amount
+    - security deposit
+    - processing fee
+    - registration fee
+    - "भुगतान"
+    - "पैसे भेजो"
+    - "पैसे भेजें"
+    - "ट्रांसफर"
+    - "paise bhejo"
+    - "paisa bhejo"
+    - "ಹಣ ಕಳುಹಿಸಿ"
+    - "ಪಾವತಿ"
+    - "ವರ್ಗಾವಣೆ"
+  video_call:
+    - video call
+    - skype
+    - whatsapp call
+    - zoom call
+    - "वीडियो कॉल"
+    - "ವಿಡಿಯೋ ಕರೆ"
+  kyc:
+    - kyc
+    - pan card
+    - pan link
+    - aadhaar link
+    - update your details
+    - re-kyc
+    - "केवाईसी"
+    - "ಕೆವೈಸಿ"
+  account_block:
+    - account will be blocked
+    - account blocked
+    - account suspended
+    - card blocked
+    - sim will be blocked
+    - sim blocked
+    - netbanking blocked
+    - "खाता बंद"
+    - "ಖಾತೆ ಸ್ಥಗಿತ"
+  electricity:
+    - electricity
+    - power supply
+    - power will be disconnected
+    - light bill
+    - bijli
+    - bescom
+    - "बिजली"
+    - "ವಿದ್ಯುತ್"
+  parcel:
+    - parcel
+    - courier
+    - package
+    - shipment
+    - fedex
+    - dhl
+    - customs duty
+    - "पार्सल"
+    - "ಪಾರ್ಸೆಲ್"
+  prize:
+    - lottery
+    - you have won
+    - you won
+    - winner
+    - prize
+    - lucky draw
+    - cashback
+    - reward
+    - kbc
+    - gift
+    - "लॉटरी"
+    - "इनाम"
+    - "जीत"
+    - "inaam"
+    - "ಲಾಟರಿ"
+    - "ಬಹುಮಾನ"
+  job:
+    - work from home
+    - part time job
+    - part-time job
+    - daily income
+    - earn rs
+    - like videos
+    - rate hotels
+    - task
+    - telegram group
+    - prepaid task
+    - commission
+    - "घर बैठे"
+    - "ghar baithe"
+    - "ಮನೆಯಿಂದ ಕೆಲಸ"
+  relative:
+    - mummy
+    - mumma
+    - papa
+    - "maa"
+    - amma
+    - appa
+    - beta
+    - your son
+    - your daughter
+    - grandson
+    - granddaughter
+    - new number
+    - my phone is broken
+    - lost my phone
+    - "मम्मी"
+    - "पापा"
+    - "बेटा"
+    - "ಅಮ್ಮ"
+    - "ಅಪ್ಪ"
+    - "ಮಗ"
+  trouble:
+    - accident
+    - hospital
+    - emergency
+    - in trouble
+    - stuck
+    - police station
+    - need money
+    - help me
+    - "मुसीबत"
+    - "अस्पताल"
+    - "हादसा"
+    - "musibat"
+    - "ಅಪಘಾತ"
+    - "ಆಸ್ಪತ್ರೆ"
+    - "ತೊಂದರೆ"
+  otp_request:
+    - share otp
+    - share the otp
+    - tell me the otp
+    - send otp
+    - send the otp
+    - otp received
+    - read the otp
+    - verification code
+    - share the code
+    - upi pin
+    - enter your pin
+    - "ओटीपी बताओ"
+    - "ओटीपी बताएं"
+    - "otp batao"
+    - "otp bata"
+    - "ಒಟಿಪಿ ಹೇಳಿ"
+  remote_app:
+    - anydesk
+    - teamviewer
+    - quicksupport
+    - rustdesk
+    - screen share
+    - screen sharing
+    - install this app
+    - download this app
+    - ".apk"
+
+playbooks:
+  PB-DIGITAL-ARREST:
+    title: "Looks like a 'digital arrest' scam: an 'officer' threatens arrest and demands money or secrecy"
+    severity: high
+    always_high: true
+    all_of: [authority, threat]
+    any_of: [payment, secrecy, video_call, urgency]
+    min_any: 1
+    truth_card: TC-DIGITAL-ARREST
+  PB-KYC-EXPIRY:
+    title: "Looks like a fake KYC message: it threatens to block your account unless you act"
+    severity: high
+    all_of: [kyc]
+    any_of: [account_block, threat, urgency, payment, otp_request]
+    min_any: 1
+    truth_card: TC-KYC
+  PB-ELECTRICITY:
+    title: "Looks like a fake electricity cut-off message"
+    severity: high
+    all_of: [electricity]
+    any_of: [threat, urgency, payment]
+    min_any: 2
+    truth_card: TC-ELECTRICITY
+  PB-PARCEL-CUSTOMS:
+    title: "Looks like a fake parcel or customs message"
+    severity: high
+    all_of: [parcel]
+    any_of: [authority, threat, payment, urgency]
+    min_any: 2
+    truth_card: TC-PARCEL
+  PB-LOTTERY-CASHBACK:
+    title: "Looks like a lottery or cashback scam: you are asked to pay to receive a prize"
+    severity: high
+    all_of: [prize]
+    any_of: [payment, otp_request, urgency]
+    min_any: 1
+    truth_card: TC-PRIZE
+  PB-TASK-JOB:
+    title: "Looks like a task or part-time job scam"
+    severity: medium
+    all_of: [job]
+    any_of: [payment, prize]
+    min_any: 1
+    truth_card: TC-JOB
+  PB-RELATIVE-IN-TROUBLE:
+    title: "Someone claims to be a relative in trouble and asks for money"
+    severity: high
+    all_of: [relative]
+    any_of: [trouble, payment, secrecy]
+    min_any: 2
+    truth_card: TC-RELATIVE
+    code_word_prompt: true
+  PB-OTP-REQUEST:
+    title: "The message asks you to share an OTP or PIN. Nobody genuine ever needs it"
+    severity: high
+    always_high: true
+    all_of: [otp_request]
+    any_of: []
+    min_any: 0
+    truth_card: TC-OTP
+  PB-REMOTE-APP:
+    title: "The message asks you to install a screen-sharing or remote-control app"
+    severity: high
+    all_of: [remote_app]
+    any_of: [payment, kyc, otp_request, authority, urgency, prize]
+    min_any: 1
+    truth_card: TC-REMOTE-APP
+  PB-PRESSURE-PAYMENT:
+    title: "The message pressures you to pay urgently while claiming authority"
+    severity: medium
+    all_of: [payment, urgency]
+    any_of: [authority, threat, secrecy]
+    min_any: 1

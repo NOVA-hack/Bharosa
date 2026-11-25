@@ -1,0 +1,104 @@
+# URL rule pack, evaluated by bharosa.checks.url. Bharosa never opens or fetches a link.
+version: "url-2026.11.1"
+
+# Official registered domains. A lookalike of any of these is flagged.
+brand_allowlist:
+  sbi: [sbi.co.in, onlinesbi.sbi, sbi.bank.in]
+  hdfc: [hdfcbank.com, hdfc.bank.in]
+  icici: [icicibank.com, icici.bank.in]
+  axis: [axisbank.com, axis.bank.in]
+  kotak: [kotak.com]
+  pnb: [pnbindia.in]
+  bankofbaroda: [bankofbaroda.in]
+  canarabank: [canarabank.com]
+  npci: [npci.org.in]
+  rbi: [rbi.org.in]
+  paytm: [paytm.com]
+  phonepe: [phonepe.com]
+  googlepay: [pay.google.com, google.com]
+  amazon: [amazon.in, amazon.com]
+  flipkart: [flipkart.com]
+  irctc: [irctc.co.in]
+  incometax: [incometax.gov.in]
+  uidai: [uidai.gov.in]
+  cybercrime: [cybercrime.gov.in]
+  indiapost: [indiapost.gov.in]
+  bescom: [bescom.co.in]
+  epfo: [epfindia.gov.in]
+  lic: [licindia.in]
+  whatsapp: [whatsapp.com]
+
+# Multi-part public suffixes the offline registered-domain parser understands.
+multi_part_suffixes:
+  - co.in
+  - gov.in
+  - org.in
+  - net.in
+  - ac.in
+  - nic.in
+  - res.in
+  - edu.in
+  - firm.in
+  - gen.in
+  - ind.in
+  - bank.in
+  - co.uk
+  - org.uk
+  - com.au
+  - com.sg
+
+risky_tlds: [xyz, top, click, buzz, icu, cyou, rest, monster, tk, ml, ga, cf, gq, work, support, live, loan, win, bid, cam, sbs, quest, lol, mom, zip]
+
+shorteners: [bit.ly, tinyurl.com, cutt.ly, is.gd, t.ly, rb.gy, shorturl.at, tiny.cc, goo.gl, ow.ly, t.co, s.id, v.gd, shrtco.de, tinu.be]
+
+# Words that, on a non-official domain, usually mean a credential or payment lure.
+lure_keywords: [kyc, verify, verification, update-kyc, pan-link, panlink, aadhaar, otp, refund, reward, cashback, prize, lottery, blocked, suspend, reactivate, electricity, bill-pay, customs, parcel, fine, challan, login, signin, netbanking, wallet, claim]
+
+login_path_words: [login, signin, sign-in, kyc, verify, netbanking, password, otp, account]
+
+rules:
+  URL-UNPARSEABLE:
+    severity: medium
+    title: "The link could not be read as a normal web address"
+  URL-RAW-IP:
+    severity: high
+    title: "The link points to a raw IP address instead of a named website"
+  URL-PUNYCODE:
+    severity: high
+    title: "The web address uses hidden or look-alike characters (punycode)"
+  URL-MIXED-SCRIPT:
+    severity: high
+    always_high: true
+    title: "The web address mixes letters from different alphabets to imitate a real site"
+  URL-LOOKALIKE:
+    severity: high
+    always_high: true
+    title: "The website name looks like a real brand but is not its official site"
+  URL-BRAND-IN-DOMAIN:
+    severity: medium
+    title: "A brand name appears inside a website that is not the brand's official site"
+  URL-RISKY-TLD:
+    severity: medium
+    title: "The website ending is often used by scam sites"
+  URL-AT-SIGN:
+    severity: high
+    title: "The link hides its real destination behind an @ sign"
+  URL-SHORTENER:
+    severity: low
+    title: "The link is shortened, so its real destination is hidden"
+  URL-HTTP-LOGIN:
+    severity: medium
+    title: "A login or KYC page is served without encryption (http)"
+  URL-APK:
+    severity: high
+    always_high: true
+    title: "The link downloads an Android app file (.apk) from outside the app store"
+  URL-LURE-KEYWORD:
+    severity: medium
+    title: "The link uses KYC, refund or reward words on a non-official website"
+  URL-NONSTANDARD-PORT:
+    severity: low
+    title: "The link uses an unusual network port"
+  URL-MANY-SUBDOMAINS:
+    severity: low
+    title: "The web address has an unusually long chain of sub-domains"

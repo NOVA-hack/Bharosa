@@ -1,0 +1,65 @@
+# Truth Cards: one official fact printed when a rule fires, with the advisory it comes from.
+# Texts are paraphrased from public advisories; check the links before the demo.
+version: "truth-2026.11.1"
+
+cards:
+  TC-QR-NEVER-RECEIVE:
+    en: "You never need to scan a QR code or enter your UPI PIN to RECEIVE money."
+    hi: "पैसे पाने के लिए कभी भी QR कोड स्कैन करने या UPI PIN डालने की ज़रूरत नहीं होती।"
+    kn: "ಹಣ ಪಡೆಯಲು QR ಕೋಡ್ ಸ್ಕ್ಯಾನ್ ಮಾಡುವ ಅಥವಾ UPI PIN ಹಾಕುವ ಅಗತ್ಯ ಎಂದಿಗೂ ಇಲ್ಲ."
+    source: "NPCI fraud awareness"
+    url: "https://www.npci.org.in/fraud-awareness"
+  TC-DIGITAL-ARREST:
+    en: "Police, CBI, customs or courts never arrest anyone over a video call, and never ask for money to close a case."
+    hi: "पुलिस, CBI, कस्टम या अदालत कभी वीडियो कॉल पर किसी को गिरफ्तार नहीं करती और केस बंद करने के लिए पैसे नहीं माँगती।"
+    kn: "ಪೊಲೀಸ್, CBI, ಕಸ್ಟಮ್ಸ್ ಅಥವಾ ನ್ಯಾಯಾಲಯ ವಿಡಿಯೋ ಕರೆಯಲ್ಲಿ ಯಾರನ್ನೂ ಬಂಧಿಸುವುದಿಲ್ಲ, ಪ್ರಕರಣ ಮುಚ್ಚಲು ಹಣ ಕೇಳುವುದಿಲ್ಲ."
+    source: "I4C advisory on Digital Arrest"
+    url: "https://cybercrime.gov.in/pdf/Advisories/ADVISORYTAU-ADV-003DigitalArrest06.03.2025.pdf"
+  TC-KYC:
+    en: "Banks do not block accounts over SMS or WhatsApp links. Update KYC only at your branch or in the bank's official app."
+    hi: "बैंक SMS या WhatsApp लिंक से खाता बंद नहीं करते। KYC केवल अपनी शाखा या बैंक के आधिकारिक ऐप में ही अपडेट करें।"
+    kn: "ಬ್ಯಾಂಕ್‌ಗಳು SMS ಅಥವಾ WhatsApp ಲಿಂಕ್ ಮೂಲಕ ಖಾತೆ ಸ್ಥಗಿತಗೊಳಿಸುವುದಿಲ್ಲ. KYC ಅನ್ನು ನಿಮ್ಮ ಶಾಖೆ ಅಥವಾ ಬ್ಯಾಂಕಿನ ಅಧಿಕೃತ ಆ್ಯಪ್‌ನಲ್ಲಿ ಮಾತ್ರ ನವೀಕರಿಸಿ."
+    source: "RBI public awareness (RBI Kehta Hai)"
+    url: "https://rbikehtahai.rbi.org.in/"
+  TC-ELECTRICITY:
+    en: "Electricity boards do not cut power at night over a phone message. Pay only through the board's official website or app."
+    hi: "बिजली विभाग फ़ोन संदेश पर रात में बिजली नहीं काटता। भुगतान केवल आधिकारिक वेबसाइट या ऐप से करें।"
+    kn: "ವಿದ್ಯುತ್ ಮಂಡಳಿ ಫೋನ್ ಸಂದೇಶದ ಮೂಲಕ ರಾತ್ರಿ ವಿದ್ಯುತ್ ಕಡಿತ ಮಾಡುವುದಿಲ್ಲ. ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್ ಅಥವಾ ಆ್ಯಪ್ ಮೂಲಕ ಮಾತ್ರ ಪಾವತಿಸಿ."
+    source: "National Cyber Crime Reporting Portal"
+    url: "https://cybercrime.gov.in/"
+  TC-PARCEL:
+    en: "Courier and customs officials do not demand fines over a call to release or clear a parcel 'with drugs in it'."
+    hi: "कूरियर या कस्टम अधिकारी कॉल पर 'ड्रग्स वाले पार्सल' के लिए जुर्माना नहीं माँगते।"
+    kn: "ಕೊರಿಯರ್ ಅಥವಾ ಕಸ್ಟಮ್ಸ್ ಅಧಿಕಾರಿಗಳು ಕರೆಯಲ್ಲಿ 'ಮಾದಕ ವಸ್ತು ಇರುವ ಪಾರ್ಸೆಲ್' ಗಾಗಿ ದಂಡ ಕೇಳುವುದಿಲ್ಲ."
+    source: "I4C advisory on Digital Arrest"
+    url: "https://cybercrime.gov.in/pdf/Advisories/ADVISORYTAU-ADV-003DigitalArrest06.03.2025.pdf"
+  TC-PRIZE:
+    en: "A real prize never asks you to pay a fee or share an OTP first."
+    hi: "असली इनाम के लिए पहले कभी फ़ीस देने या OTP बताने की ज़रूरत नहीं होती।"
+    kn: "ನಿಜವಾದ ಬಹುಮಾನಕ್ಕೆ ಮೊದಲು ಶುಲ್ಕ ಕಟ್ಟುವ ಅಥವಾ OTP ಹೇಳುವ ಅಗತ್ಯ ಎಂದಿಗೂ ಇಲ್ಲ."
+    source: "NPCI fraud awareness"
+    url: "https://www.npci.org.in/fraud-awareness"
+  TC-JOB:
+    en: "A genuine job never asks you to deposit money to unlock tasks or earnings."
+    hi: "असली नौकरी में काम या कमाई खोलने के लिए कभी पैसे जमा नहीं करवाए जाते।"
+    kn: "ನಿಜವಾದ ಕೆಲಸದಲ್ಲಿ ಕೆಲಸ ಅಥವಾ ಗಳಿಕೆ ತೆರೆಯಲು ಹಣ ಠೇವಣಿ ಮಾಡಲು ಹೇಳುವುದಿಲ್ಲ."
+    source: "National Cyber Crime Reporting Portal"
+    url: "https://cybercrime.gov.in/"
+  TC-RELATIVE:
+    en: "Hang up and call your relative back on the number you already have before sending any money."
+    hi: "पैसे भेजने से पहले फ़ोन काटें और अपने रिश्तेदार को उनके पुराने नंबर पर खुद कॉल करें।"
+    kn: "ಹಣ ಕಳುಹಿಸುವ ಮೊದಲು ಕರೆ ಕಡಿತಗೊಳಿಸಿ, ನಿಮ್ಮ ಸಂಬಂಧಿಕರಿಗೆ ನಿಮ್ಮ ಬಳಿ ಇರುವ ಹಳೆಯ ಸಂಖ್ಯೆಗೆ ನೀವೇ ಕರೆ ಮಾಡಿ."
+    source: "National Cyber Crime Reporting Portal"
+    url: "https://cybercrime.gov.in/"
+  TC-OTP:
+    en: "No bank, police officer or company will ever ask for your OTP or UPI PIN."
+    hi: "कोई भी बैंक, पुलिस या कंपनी कभी आपका OTP या UPI PIN नहीं माँगती।"
+    kn: "ಯಾವ ಬ್ಯಾಂಕ್, ಪೊಲೀಸ್ ಅಥವಾ ಕಂಪನಿಯೂ ನಿಮ್ಮ OTP ಅಥವಾ UPI PIN ಕೇಳುವುದಿಲ್ಲ."
+    source: "RBI public awareness (RBI Kehta Hai)"
+    url: "https://rbikehtahai.rbi.org.in/"
+  TC-REMOTE-APP:
+    en: "Never install AnyDesk, TeamViewer or any app a caller asks for. It lets them control your phone."
+    hi: "कॉल करने वाले के कहने पर AnyDesk, TeamViewer या कोई भी ऐप कभी इंस्टॉल न करें। इससे वे आपका फ़ोन चला सकते हैं।"
+    kn: "ಕರೆ ಮಾಡಿದವರು ಹೇಳಿದರೆ AnyDesk, TeamViewer ಅಥವಾ ಯಾವುದೇ ಆ್ಯಪ್ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಬೇಡಿ. ಅದರಿಂದ ಅವರು ನಿಮ್ಮ ಫೋನ್ ನಿಯಂತ್ರಿಸಬಹುದು."
+    source: "NPCI fraud awareness"
+    url: "https://www.npci.org.in/fraud-awareness"

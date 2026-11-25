@@ -1,0 +1,252 @@
+# Labeled synthetic corpus for `bharosa eval`. Every value here is invented by the team.
+# No real UPI IDs, phone numbers, Aadhaar numbers or private messages.
+# label: scam | benign.  expected: the risk level we want (low | medium | high).
+# A scam counts as caught when flagged medium or high; a benign case passes when it stays low.
+
+cases:
+  # ---------------- QR: benign ----------------
+  - id: qr-shop
+    type: qr
+    label: benign
+    expected: low
+    input: "upi://pay?pa=sharmagrocery.demo@okaxis&pn=Sharma%20Grocery&am=240&cu=INR&tn=Order%2017"
+  - id: qr-milk
+    type: qr
+    label: benign
+    expected: low
+    input: "upi://pay?pa=nandini.milk.demo@ybl&pn=Nandini%20Milk%20Booth&cu=INR"
+  - id: qr-pharmacy
+    type: qr
+    label: benign
+    expected: low
+    input: "upi://pay?pa=janaushadhi.demo@oksbi&pn=Jan%20Aushadhi%20Kendra&am=380&cu=INR&tn=Medicines"
+  - id: qr-autorickshaw
+    type: qr
+    label: benign
+    expected: low
+    input: "upi://pay?pa=ravi.auto.demo@paytm&pn=Ravi%20Kumar&cu=INR"
+  - id: qr-temple
+    type: qr
+    label: benign
+    expected: low
+    input: "upi://pay?pa=templetrust.demo@okicici&pn=Sri%20Temple%20Trust&tn=Donation&cu=INR"
+  - id: qr-vegetables
+    type: qr
+    label: benign
+    expected: low
+    input: "upi://pay?pa=fresh.veggies.demo@ibl&pn=Fresh%20Vegetables&am=90&cu=INR"
+  # ---------------- QR: scam ----------------
+  - id: qr-cashback
+    type: qr
+    label: scam
+    expected: high
+    input: "upi://pay?pa=rewards.desk.demo@okhdfcbank&pn=SBI%20Rewards&am=4999&cu=INR&tn=Scan%20to%20receive%20cashback%20Rs%204999"
+  - id: qr-refund
+    type: qr
+    label: scam
+    expected: high
+    input: "upi://pay?pa=refund.helpdesk.demo@ybl&pn=Amazon%20Refund%20Dept&am=1&cu=INR&tn=Refund%20of%20Rs%202500"
+  - id: qr-lottery
+    type: qr
+    label: scam
+    expected: high
+    input: "upi://pay?pa=kbc.winner.demo@axl&pn=KBC%20Lottery&am=12500&cu=INR&tn=You%20won%20prize%20claim%20now"
+  - id: qr-unknown-handle
+    type: qr
+    label: scam
+    expected: high
+    input: "upi://pay?pa=collect.demo@fastpayx&pn=Customer%20Care&am=1500&cu=INR"
+  - id: qr-electricity-fine
+    type: qr
+    label: scam
+    expected: high
+    input: "upi://pay?pa=bill.desk.demo@ybl&pn=Electricity%20Board&am=1850&cu=INR&tn=Pay%20immediately%20or%20power%20cut"
+  - id: qr-non-upi
+    type: qr
+    label: scam
+    expected: high
+    input: "https://bit.ly/claim-upi-reward"
+  - id: qr-usd
+    type: qr
+    label: scam
+    expected: medium
+    input: "upi://pay?pa=invest.desk.demo@okaxis&pn=Global%20Invest&am=500&cu=USD"
+  - id: qr-big-first
+    type: qr
+    label: scam
+    expected: medium
+    input: "upi://pay?pa=car.deal.demo@oksbi&pn=Car%20Seller&am=65000&cu=INR&tn=Token%20advance"
+  # ---------------- URL: benign ----------------
+  - id: url-sbi
+    type: url
+    label: benign
+    expected: low
+    input: "https://www.onlinesbi.sbi/"
+  - id: url-npci
+    type: url
+    label: benign
+    expected: low
+    input: "https://www.npci.org.in/what-we-do/upi/product-overview"
+  - id: url-amazon
+    type: url
+    label: benign
+    expected: low
+    input: "https://www.amazon.in/gp/your-account/order-history"
+  - id: url-cybercrime
+    type: url
+    label: benign
+    expected: low
+    input: "https://cybercrime.gov.in/"
+  - id: url-news
+    type: url
+    label: benign
+    expected: low
+    input: "https://www.thehindu.com/news/cities/bangalore/"
+  - id: url-irctc
+    type: url
+    label: benign
+    expected: low
+    input: "https://www.irctc.co.in/nget/train-search"
+  # ---------------- URL: scam ----------------
+  - id: url-sbi-kyc
+    type: url
+    label: scam
+    expected: high
+    input: "http://sbi-kyc-update.xyz/login"
+  - id: url-paytm-lookalike
+    type: url
+    label: scam
+    expected: high
+    input: "https://paytrn.com/kyc/verify"
+  - id: url-raw-ip
+    type: url
+    label: scam
+    expected: high
+    input: "http://103.21.58.10/hdfc/netbanking"
+  - id: url-apk
+    type: url
+    label: scam
+    expected: high
+    input: "https://bescom-bill-update.in/download/BillPay.apk"
+  - id: url-punycode
+    type: url
+    label: scam
+    expected: high
+    input: "https://xn--pytm-6za.com/login"
+  - id: url-at-sign
+    type: url
+    label: scam
+    expected: high
+    input: "https://www.icicibank.com@secure-login.top/verify"
+  - id: url-customs
+    type: url
+    label: scam
+    expected: high
+    input: "https://indiapost-parcel-customs.in/pay-fine"
+  # ---------------- Messages: benign ----------------
+  - id: msg-family
+    type: msg
+    label: benign
+    expected: low
+    input: "Hi Amma, reaching home by 7. Shall I get vegetables on the way?"
+  - id: msg-doctor
+    type: msg
+    label: benign
+    expected: low
+    input: "Reminder: your appointment with Dr. Rao is tomorrow at 11 am. Please bring your old reports."
+  - id: msg-bank-genuine
+    type: msg
+    label: benign
+    expected: low
+    input: "Rs 240 debited from your account for UPI payment to Sharma Grocery. If not done by you, call your bank."
+  - id: msg-delivery
+    type: msg
+    label: benign
+    expected: low
+    input: "Your Amazon order has been delivered. Track at https://www.amazon.in/gp/your-account/order-history"
+  - id: msg-hindi-family
+    type: msg
+    label: benign
+    expected: low
+    input: "पापा, मैं शाम को आऊँगा। खाना साथ में खाएंगे।"
+  - id: msg-kannada-family
+    type: msg
+    label: benign
+    expected: low
+    input: "ಅಮ್ಮ, ನಾನು ಸಂಜೆ ಮನೆಗೆ ಬರುತ್ತೇನೆ. ಊಟ ಒಟ್ಟಿಗೆ ಮಾಡೋಣ."
+  - id: msg-otp-genuine
+    type: msg
+    label: benign
+    expected: low
+    input: "Your OTP for login is 482913. Do not share it with anyone. Bank staff will never ask for it."
+  - id: msg-electricity-genuine
+    type: msg
+    label: benign
+    expected: low
+    input: "Your electricity bill of Rs 1,240 is generated. Due date 05 Dec. Pay on the official BESCOM website."
+  # ---------------- Messages: scam ----------------
+  - id: msg-digital-arrest
+    type: msg
+    label: scam
+    expected: high
+    input: "This is Inspector Sharma from CBI cyber cell. A money laundering case is registered on your Aadhaar. You are under digital arrest. Stay on video call and do not tell anyone. Transfer Rs 2,50,000 to the safe account immediately for verification."
+  - id: msg-kyc
+    type: msg
+    label: scam
+    expected: high
+    input: "Dear customer, your SBI account will be blocked today as KYC is expired. Update immediately: http://sbi-kyc-update.xyz/login"
+  - id: msg-electricity
+    type: msg
+    label: scam
+    expected: high
+    input: "Dear consumer, your electricity power will be disconnected tonight at 9.30 pm because previous month bill was not updated. Pay immediately by calling our officer."
+  - id: msg-parcel
+    type: msg
+    label: scam
+    expected: high
+    input: "FedEx: Your parcel to Taiwan contains illegal drugs and passports. Customs officer will connect you to police. Pay the clearance fine now to avoid arrest."
+  - id: msg-lottery
+    type: msg
+    label: scam
+    expected: high
+    input: "Congratulations! You have won Rs 25 lakh in KBC lucky draw. Pay processing fee of Rs 9,999 to claim your prize today."
+  - id: msg-job
+    type: msg
+    label: scam
+    expected: medium
+    input: "Part time job! Earn Rs 5000 daily by liking videos. Join our telegram group and complete a prepaid task with a small deposit."
+  - id: msg-relative
+    type: msg
+    label: scam
+    expected: high
+    input: "Mummy this is my new number, my phone is broken. I had an accident and I am in hospital. Please send money urgently to ravi.help.demo@ybl and don't tell papa."
+  - id: msg-otp-request
+    type: msg
+    label: scam
+    expected: high
+    input: "Sir I am calling from your bank. To stop the fraud transaction please share the OTP you just received."
+  - id: msg-remote-app
+    type: msg
+    label: scam
+    expected: high
+    input: "To get your refund please download AnyDesk and share the code. Our officer will process it immediately."
+  - id: msg-hindi-arrest
+    type: msg
+    label: scam
+    expected: high
+    input: "मैं सीबीआई अधिकारी बोल रहा हूँ। आपके नाम पर वारंट है और आपको गिरफ्तार किया जाएगा। किसी को मत बताना और तुरंत पैसे भेजें।"
+  - id: msg-hindi-electricity
+    type: msg
+    label: scam
+    expected: high
+    input: "आपका बिजली कनेक्शन आज रात 9:30 बजे बंद कर दिया जाएगा। तुरंत भुगतान करें।"
+  - id: msg-kannada-arrest
+    type: msg
+    label: scam
+    expected: high
+    input: "ನಾನು ಪೊಲೀಸ್ ಅಧಿಕಾರಿ. ನಿಮ್ಮ ಮೇಲೆ ವಾರಂಟ್ ಇದೆ, ನಿಮ್ಮನ್ನು ಬಂಧನ ಮಾಡಲಾಗುವುದು. ಯಾರಿಗೂ ಹೇಳಬೇಡಿ, ತಕ್ಷಣ ಹಣ ಕಳುಹಿಸಿ."
+  - id: msg-romanised-hindi
+    type: msg
+    label: scam
+    expected: high
+    input: "Beta main musibat mein hoon, accident ho gaya. Jaldi paise bhejo, kisi ko mat batana."
