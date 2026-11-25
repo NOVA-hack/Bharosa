@@ -33,6 +33,19 @@ def decode_image(path: str | Path) -> str:
     return decode_array(img)
 
 
+def decode_bytes(data: bytes) -> str:
+    """Decode a QR from image bytes (a photo sent to the chat bot)."""
+    if len(data) > MAX_IMAGE_BYTES:
+        raise QRDecodeError("image is larger than the 5 MB limit")
+    cv2, det = _detector()
+    import numpy as np
+
+    img = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
+    if img is None:
+        raise QRDecodeError("the file is not an image OpenCV can read")
+    return decode_array(img)
+
+
 def decode_array(img) -> str:
     cv2, det = _detector()
     attempts = [img]

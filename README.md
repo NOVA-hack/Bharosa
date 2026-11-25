@@ -11,6 +11,7 @@ Bharosa is a command-line tool and an MCP server. Run `bharosa check` on a QR im
 - [Quick start](#quick-start)
 - [Demo: the three scenarios](#demo-the-three-scenarios)
 - [Parent and guardian](#parent-and-guardian)
+- [Chat apps: Telegram and WhatsApp](#chat-apps-telegram-and-whatsapp)
 - [Commands](#commands)
 - [MCP server](#mcp-server)
 - [How a verdict is decided](#how-a-verdict-is-decided)
@@ -134,6 +135,66 @@ After pairing, every command on that profile uses the relay. `bharosa config set
 | `BHAROSA_NO_KEYRING` | `1` stores the API token in the profile file instead of the OS keyring | unset |
 | `BHAROSA_RELAY_DB` | Relay database when started through uvicorn | `bharosa-relay.db` |
 
+## Chat apps: Telegram and WhatsApp
+
+Parents can forward a suspicious message, link, `upi://` link or a photo of a QR code to the Bharosa bot and get the verdict back in the same chat. Guardians get review requests with **Approve**, **Block** and **Details** buttons. One `bharosa bot serve` process runs every platform you configure, so a parent on Telegram can have a guardian on WhatsApp.
+
+The bot uses the same deterministic checks as `bharosa check` and the same family queue: the local SQLite file, or the relay when `BHAROSA_RELAY_URL` is set. Anyone can get a verdict. A chat paired as a parent also sends its risky cases to the family for review.
+
+**Telegram (free, no public URL needed).** Create a bot with [@BotFather](https://t.me/BotFather), then:
+
+```powershell
+$env:BHAROSA_TELEGRAM_TOKEN = "<token from BotFather>"
+bharosa bot serve
+```
+
+The bot uses long polling, so it works from a laptop on venue Wi-Fi. It answers private chats only, because in a group anyone could press a guardian's buttons.
+
+**WhatsApp (Meta WhatsApp Cloud API).** Create a Meta app with the WhatsApp product and use its test number. Then set:
+
+```powershell
+$env:BHAROSA_WHATSAPP_TOKEN = "<access token>"
+$env:BHAROSA_WHATSAPP_PHONE_ID = "<phone number id>"
+$env:BHAROSA_WHATSAPP_APP_SECRET = "<app secret>"
+$env:BHAROSA_WHATSAPP_VERIFY_TOKEN = "<any string you choose>"
+bharosa bot serve --port 8780
+```
+
+Expose the webhook over HTTPS (for example `cloudflared tunnel --url http://localhost:8780`), and register `https://<tunnel>/whatsapp/webhook` with the same verify token in the Meta app's WhatsApp configuration. Subscribe it to `messages`. Every POST must carry a valid `X-Hub-Signature-256` from your app secret, or it is rejected. Meta's test number can message only the recipient numbers you add in the app. Check Meta's current pricing before you go past the test number.
+
+When both sets of variables are present, `bharosa bot serve` runs both. Use `--no-telegram` or `--no-whatsapp` to turn one off.
+
+**In the chat:**
+
+| Message | What happens |
+|---|---|
+| Any text, a link, a `upi://` link or a QR photo | Verdict with reasons, Truth Card and masking summary |
+| `/parent <name>` | Turn on family review for this chat; prints a pairing code |
+| `/join <code> <name>` | Join as a guardian; cases already waiting are sent straight away |
+| `/code` | A fresh pairing code (parent) |
+| Approve / Block / Details buttons, or `/approve <case>` and `/block <case> [note]` | Guardian decision; the parent is told at once. The last 6 characters of a case id are enough |
+| `/pending`, `/status [case]` | What is waiting, and where a case stands |
+| `/stop [reason]` / `/unlock` | Emergency Stop for the whole family, and lifting it (guardian) |
+| `/lang en\|hi\|kn`, `/unlink`, `/help` | Language, forget this chat's link, help |
+
+Every few seconds the bot also pushes held cases that came from the CLI to guardians paired in a chat, and tells the parent's chat when a case was decided from the CLI, expired or was stopped. CLI and chat family members can therefore mix.
+
+**Privacy in chat mode.** This differs from the CLI, so read it before a demo:
+
+- The parent's original message or photo goes through Telegram's or Meta's servers to the bot, because the parent sent it there. Masking runs on the machine that runs the bot, not on the parent's phone.
+- The bot does not keep raw input. The family queue gets only the masked case. Guardians see only masked content, the masked payee and the reasons.
+- The chat link file (`BHAROSA_BOT_DB`, default `~/.bharosa/bot.db`) maps chat ids to family members and holds each member's Bharosa API token, as a CLI profile does. Keep it on the bot machine, readable only by you, and delete it after the event.
+- Bot tokens and API credentials are read only from environment variables and never logged. httpx request logging is turned down because Telegram puts the token in the URL. The tests use fake transports and never call Telegram or Meta.
+- Each chat is limited to 30 checks per hour, on top of the family limit of 30 cases per hour.
+
+| Variable | Meaning | Default |
+|---|---|---|
+| `BHAROSA_TELEGRAM_TOKEN` | Telegram bot token | unset (Telegram off) |
+| `BHAROSA_WHATSAPP_TOKEN`, `_PHONE_ID`, `_APP_SECRET`, `_VERIFY_TOKEN` | WhatsApp Cloud API credentials | unset (WhatsApp off) |
+| `BHAROSA_WHATSAPP_API_VERSION` | Graph API version | `v21.0` |
+| `BHAROSA_BOT_DB` | Chat link file | `~/.bharosa/bot.db` |
+| `BHAROSA_BOT_LANG` | Language for chats that have not chosen one | `en` |
+
 ## Commands
 
 Every check command takes `--lang en|hi|kn`, `--voice`, `--json`, `--explain` (full rule trace), `--no-wait`, `--direct` and `--keep-raw`.
@@ -159,6 +220,7 @@ Every check command takes `--lang en|hi|kn`, `--voice`, `--json`, `--explain` (f
 | `bharosa eval` | Run the labeled corpus: recall, specificity, per-rule hits |
 | `bharosa mcp` | Start the MCP server on stdio |
 | `bharosa relay` | Run the family relay |
+| `bharosa bot serve [--telegram/--no-telegram] [--whatsapp/--no-whatsapp] [--port]` | Run the Telegram and WhatsApp bots |
 | `bharosa voice test` / `voice cache` | Test audio / pre-generate every clip for offline use |
 | `bharosa purge [--days 7]` | Apply the retention policy to the local DB |
 | `bharosa config show` / `config set lang\|relay <value>` | Profile settings |
@@ -285,7 +347,7 @@ python -m pytest
 bharosa eval
 ```
 
-The test suite (115 tests) covers every rule pack, scoring, masking validators, the family service (pairing, approvals, expiry, cross-family isolation, rate limit, Emergency Stop, retention, append-only audit), the relay over HTTP, the MCP server both in-process and over real stdio, QR image decoding of the samples, chat parsing and end-to-end CLI flows with two profiles. CI runs it on Ubuntu and Windows ([.github/workflows/tests.yml](.github/workflows/tests.yml)).
+The test suite (139 tests) covers every rule pack, scoring, masking validators, the family service (pairing, approvals, expiry, cross-family isolation, rate limit, Emergency Stop, retention, append-only audit), the relay over HTTP, the MCP server both in-process and over real stdio, QR image decoding of the samples, chat parsing, end-to-end CLI flows with two profiles, and the chat bots (the shared core with fake transports, Telegram polling and buttons against a mocked Bot API, and the WhatsApp webhook with signature checks, retries and reply buttons against a mocked Graph API). CI runs it on Ubuntu and Windows ([.github/workflows/tests.yml](.github/workflows/tests.yml)).
 
 `bharosa eval` runs the labeled corpus in [samples/cases.yaml](samples/cases.yaml). Current result on our 48 synthetic cases (28 scam, 20 benign): recall 100%, specificity 100%. The team wrote both the rules and the corpus, so these numbers show the rules do what we intended; they are not a measure of real-world accuracy. Add new cases (especially ones the rules miss) before quoting numbers in the pitch. `bharosa eval --mcp` runs the same corpus through the MCP server.
 
@@ -302,6 +364,7 @@ src/bharosa/
   service.py         family service: pairing, approvals, Emergency Stop, audit
   store.py           SQLite schema
   relay/app.py       FastAPI family relay (with an SSE event stream)
+  chatbot/           chat app layer: core.py (shared bot), telegram.py, whatsapp.py, serve.py
   backend.py         local mode or relay client
   evidence.py        redacted evidence packet
   explain.py, llm.py templates and the optional LLM layer
@@ -319,6 +382,7 @@ tests/               pytest suite
 - A guardian approval is an extra review step, not proof that a payment is genuine.
 - Hindi and Kannada keywords and translations were written by the team and should be reviewed by native speakers.
 - The PSP handle list and brand allowlist are small demo lists.
+- The chat bots were tested against mocked Telegram and Meta APIs, not live accounts. Telegram groups are not supported. WhatsApp outside the 24-hour customer-service window needs approved message templates, which are not built. The bot cannot see or block a payment made in another app.
 
 ## Sources and references
 

@@ -952,6 +952,38 @@ def relay_cmd(host: str = typer.Option("127.0.0.1", "--host"), port: int = typer
     uvicorn.run(create_app(svc), host=host, port=port, log_level="info")
 
 
+bot_app = typer.Typer(help="Chat app bots (Telegram, WhatsApp) for checks and guardian review.",
+                      no_args_is_help=True)
+app.add_typer(bot_app, name="bot")
+
+
+@bot_app.command("serve")
+def bot_serve_cmd(
+    telegram: Optional[bool] = typer.Option(None, "--telegram/--no-telegram",
+                                            help="Run the Telegram bot (default: when BHAROSA_TELEGRAM_TOKEN is set)"),
+    whatsapp: Optional[bool] = typer.Option(None, "--whatsapp/--no-whatsapp",
+                                            help="Run the WhatsApp webhook (default: when its four env vars are set)"),
+    host: str = typer.Option("127.0.0.1", "--host", help="WhatsApp webhook host"),
+    port: int = typer.Option(8780, "--port", help="WhatsApp webhook port"),
+) -> None:
+    """Run the chat bots. Credentials come only from environment variables."""
+    from .chatbot.serve import BotSettings, serve
+
+    s = BotSettings.from_env()
+    tg = s.telegram_ready if telegram is None else telegram
+    wa = s.whatsapp_ready if whatsapp is None else whatsapp
+    if tg and not s.telegram_ready:
+        _fail("Set BHAROSA_TELEGRAM_TOKEN (from @BotFather) first.")
+    if wa and not s.whatsapp_ready:
+        _fail("Set these first: " + ", ".join(s.whatsapp_missing()))
+    if not tg and not wa:
+        _fail("No chat platform configured. Set BHAROSA_TELEGRAM_TOKEN and/or the BHAROSA_WHATSAPP_* variables.")
+    where = f"relay {s.relay_url}" if s.relay_url else "local family database"
+    out.print(f"Bharosa bot: telegram={'on' if tg else 'off'}, whatsapp={'on' if wa else 'off'}, queue: {where}, "
+              f"chat links: {s.bot_db}")
+    serve(s, telegram=tg, whatsapp=wa, host=host, port=port)
+
+
 @voice_app.command("test")
 def voice_test(lang: str = typer.Option("en", "--lang", "-l"),
                text: Optional[str] = typer.Option(None, "--text")) -> None:
