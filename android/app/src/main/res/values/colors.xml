@@ -1,0 +1,12 @@
+<resources>
+    <color name="brand">#0B5D4B</color>
+    <color name="brand_dark">#063D31</color>
+    <color name="risk_low">#1E7B3A</color>
+    <color name="risk_low_bg">#E6F4EA</color>
+    <color name="risk_medium">#9A5B00</color>
+    <color name="risk_medium_bg">#FFF1DB</color>
+    <color name="risk_high">#B3261E</color>
+    <color name="risk_high_bg">#FCE8E6</color>
+    <color name="muted">#5F6368</color>
+    <color name="card_bg">#F6F7F8</color>
+</resources>

@@ -320,6 +320,30 @@ def test_telegram_buttons_and_callback(service, clock, tmp_path):
     assert "Your family blocked this" in api.sent()[-1]["text"]
 
 
+def test_telegram_bad_update_does_not_stop_polling(service, clock, tmp_path, monkeypatch):
+    from bharosa.chatbot.telegram import poll_once
+
+    api, transport, bot = _telegram([_msg(1, 100, "boom"), _msg(2, 100, "http://sbi-kyc-update.xyz/login")],
+                                    service, clock, tmp_path)
+    real = bot.handle
+
+    def flaky(ev):
+        if ev.text == "boom":
+            raise RuntimeError("unexpected")
+        real(ev)
+
+    monkeypatch.setattr(bot, "handle", flaky)
+    assert poll_once(bot, transport, None, timeout=0) == 3  # the bad update is skipped, not replayed
+    assert api.sent()[-1]["text"].startswith("🔴")
+
+
+def test_empty_image_is_a_decode_error():
+    from bharosa.qrdecode import QRDecodeError, decode_bytes
+
+    with pytest.raises(QRDecodeError):
+        decode_bytes(b"")
+
+
 def test_telegram_errors_never_show_the_token():
     from bharosa.chatbot.telegram import TelegramError, TelegramTransport
 

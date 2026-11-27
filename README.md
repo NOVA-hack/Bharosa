@@ -2,9 +2,9 @@
 
 **A family safety layer for suspicious payment QR codes, links and scam messages.**
 
-Bharosa is a command-line tool and an MCP server. Run `bharosa check` on a QR image, a link or a message and it gives a deterministic risk verdict with the reasons, in English, Hindi or Kannada. A risky case is paused and lands in a family guardian's terminal, where they approve it, block it or press Emergency Stop.
+Bharosa is a command-line tool, an MCP server, Telegram/WhatsApp bots and an Android app. Run `bharosa check` on a QR image, a link or a message and it gives a deterministic risk verdict with the reasons, in English, Hindi or Kannada. A risky case is paused and lands in a family guardian's terminal, where they approve it, block it or press Emergency Stop.
 
-> **Prototype scope:** Bharosa does not process UPI payments, replace payment apps, or guarantee that a payment or message is safe. The "continue to UPI app" step is a mock handoff that prints the payment link and never executes it. Bharosa can pause only its own flow; it cannot block a transaction inside another app. All sample data is synthetic.
+> **Prototype scope:** Bharosa does not process UPI payments, replace payment apps, or guarantee that a payment or message is safe. In the CLI the "continue to UPI app" step is a mock handoff that prints the payment link and never executes it. The Android app hands an allowed or guardian-approved `upi://pay` link to Android's UPI app chooser; the payment app then asks for the PIN as usual, and Bharosa never sees it. Bharosa can pause only its own flow; it cannot block a transaction inside another app. All sample data is synthetic.
 
 ## Contents
 
@@ -12,6 +12,7 @@ Bharosa is a command-line tool and an MCP server. Run `bharosa check` on a QR im
 - [Demo: the three scenarios](#demo-the-three-scenarios)
 - [Parent and guardian](#parent-and-guardian)
 - [Chat apps: Telegram and WhatsApp](#chat-apps-telegram-and-whatsapp)
+- [Android app](#android-app)
 - [Commands](#commands)
 - [MCP server](#mcp-server)
 - [How a verdict is decided](#how-a-verdict-is-decided)
@@ -195,6 +196,65 @@ Every few seconds the bot also pushes held cases that came from the CLI to guard
 | `BHAROSA_BOT_DB` | Chat link file | `~/.bharosa/bot.db` |
 | `BHAROSA_BOT_LANG` | Language for chats that have not chosen one | `en` |
 
+## Android app
+
+A native Kotlin app in [android/](android/) for the parent's and the guardian's phones. It talks to the family relay, so the risk decision stays in the Python rule packs and the app never scores anything itself.
+
+**What it does**
+
+- **Scan a payment QR in the app** (ZXing). The relay checks it. Low risk shows the reasons and a **Continue to UPI app** button, which opens Android's UPI app chooser with the same `upi://pay` link, prefilled.
+- **Risky payments wait for family.** A medium or high result is held as a guardian review case in the same queue the CLI and the bots use. The parent sees "waiting for your family". When a guardian approves, the parent gets the Continue button; when they block, the parent is told not to pay. The app checks the link's SHA-256 against the approved case before handing it off.
+- **Guardians decide from the app or from the bot.** The guardian's home screen lists held cases (masked content, payee, amount, reasons) with Approve and Block. A guardian paired with the Telegram or WhatsApp bot gets the same case as a push with buttons, provided the bot runs against the same relay (`BHAROSA_RELAY_URL`).
+- **Opens `upi://` links.** Bharosa registers as a handler for `upi://`, so a payment link tapped in a browser or chat can be opened with Bharosa and checked first. Its own hand-off leaves Bharosa out of the chooser.
+- **Share target for text.** In WhatsApp, Messages or a browser, Share a message or link and pick **Check with Bharosa**. Shared text is checked as a message, link or UPI link. Shared messages are never turned into payments.
+- **Emergency Stop** for either role, **Lift Emergency Stop** for guardians, English, Hindi or Kannada warnings, and pairing in either direction (the app's pairing code works with the bot's `/join`).
+
+**Run it**
+
+1. Start the relay so the phone can reach it:
+
+   ```powershell
+   bharosa relay --host 0.0.0.0 --port 8765
+   ```
+
+   To let the bot's guardians decide app cases, run the bot against the same relay:
+
+   ```powershell
+   $env:BHAROSA_RELAY_URL = "http://127.0.0.1:8765"; bharosa bot serve
+   ```
+
+2. Build and install. You need the Android SDK (platform 35) and JDK 17. The Gradle wrapper downloads everything else.
+
+   ```powershell
+   cd android; .\gradlew.bat assembleDebug
+   ```
+
+   ```powershell
+   adb install -r android\app\build\outputs\apk\debug\app-debug.apk
+   ```
+
+   Or open `android/` in Android Studio and press Run. If Gradle fails with "Unable to establish loopback connection" on Windows, point Java's socket temp folder at a short existing folder and try again: `$env:JAVA_TOOL_OPTIONS = "-Djdk.net.unixdomain.tmpdir=C:\gradle-tmp"`.
+
+3. In the app, open **Setup**. The emulator reaches the laptop at `http://10.0.2.2:8765` (the default). A real phone on the same Wi-Fi uses `http://<laptop IP>:8765`; allow port 8765 through Windows Firewall for private networks. Then **Create our family** on the parent's phone, and **Join family** with the pairing code on the guardian's phone (or `/join <code> <name>` in the bot).
+
+To try it without printing QRs, show `samples/qr/*.png` on the laptop screen and scan them, or open a link with Bharosa from adb:
+
+```powershell
+adb shell am start -a android.intent.action.VIEW -d "upi://pay?pa=rewards.desk.demo@okhdfcbank&pn=SBI%20Rewards&am=4999&tn=receive%20cashback"
+```
+
+The emulator has no UPI app, so an allowed payment ends with "No UPI app on this phone", which is the safe outcome for a demo. **On a real phone, do not enter a UPI PIN for the demo payees**: the sample UPI IDs are synthetic, but a real payment app would still try to pay them.
+
+**The check API** (added to the relay for the app):
+
+| Route | Use |
+|---|---|
+| `POST /check` `{content, kind: auto\|qr\|url\|msg, lang}` | Run the checks. With a parent's token the masked case is queued, and `action` is `proceed`, `hold` (sent for review) or `stop` (Emergency Stop on). Without a token nothing is stored and a risky result is `warn`. Returns the headline, reasons, Truth Card, masked payee, amount, `is_payment` and `input_sha256` |
+| `GET /cases?state=held`, `GET /cases/{id}`, `POST /cases/{id}/decision` | Guardian queue and decisions (existing routes) |
+| `GET /cases/{id}/status`, `POST /cases/{id}/handoff` | The parent waits for a decision, then records the hand-off (refused unless allowed or approved) |
+
+**Privacy in app mode.** The CLI masks on the parent's laptop. The phone cannot run the rule packs, so the app sends what it scanned or was shared to the relay over HTTP. The relay checks it in memory and stores only the masked case, as with the bots. The raw `upi://` link stays on the parent's phone until hand-off. The app keeps its relay token in app-private preferences (move it to the Android Keystore before real use), and allows plain HTTP because the hackathon relay runs on a laptop; put the relay behind HTTPS for anything beyond a demo. Checks without a token are limited to 60 per hour per address.
+
 ## Commands
 
 Every check command takes `--lang en|hi|kn`, `--voice`, `--json`, `--explain` (full rule trace), `--no-wait`, `--direct` and `--keep-raw`.
@@ -347,7 +407,13 @@ python -m pytest
 bharosa eval
 ```
 
-The test suite (139 tests) covers every rule pack, scoring, masking validators, the family service (pairing, approvals, expiry, cross-family isolation, rate limit, Emergency Stop, retention, append-only audit), the relay over HTTP, the MCP server both in-process and over real stdio, QR image decoding of the samples, chat parsing, end-to-end CLI flows with two profiles, and the chat bots (the shared core with fake transports, Telegram polling and buttons against a mocked Bot API, and the WhatsApp webhook with signature checks, retries and reply buttons against a mocked Graph API). CI runs it on Ubuntu and Windows ([.github/workflows/tests.yml](.github/workflows/tests.yml)).
+The Python test suite (152 tests) covers every rule pack, scoring, masking validators, the family service (pairing, approvals, expiry, cross-family isolation, rate limit, Emergency Stop, retention, append-only audit), the relay over HTTP, the MCP server both in-process and over real stdio, QR image decoding of the samples, chat parsing, end-to-end CLI flows with two profiles, and the chat bots (the shared core with fake transports, Telegram polling and buttons against a mocked Bot API, and the WhatsApp webhook with signature checks, retries and reply buttons against a mocked Graph API), and the app check API (`POST /check` routing, hand-off rules, Emergency Stop, the app-to-bot review loop, and that the Android test fixtures match the relay). CI runs it on Ubuntu and Windows ([.github/workflows/tests.yml](.github/workflows/tests.yml)).
+
+The Android app has JVM unit tests (11) for link parsing, the hand-off rule, share text, hashing and parsing real relay responses (fixtures written by `scripts/make_android_fixtures.py`):
+
+```powershell
+cd android; .\gradlew.bat testDebugUnitTest
+```
 
 `bharosa eval` runs the labeled corpus in [samples/cases.yaml](samples/cases.yaml). Current result on our 48 synthetic cases (28 scam, 20 benign): recall 100%, specificity 100%. The team wrote both the rules and the corpus, so these numbers show the rules do what we intended; they are not a measure of real-world accuracy. Add new cases (especially ones the rules miss) before quoting numbers in the pitch. `bharosa eval --mcp` runs the same corpus through the MCP server.
 
@@ -365,6 +431,7 @@ src/bharosa/
   store.py           SQLite schema
   relay/app.py       FastAPI family relay (with an SSE event stream)
   chatbot/           chat app layer: core.py (shared bot), telegram.py, whatsapp.py, serve.py
+  appcheck.py        check-and-route behind the relay's POST /check (Android app)
   backend.py         local mode or relay client
   evidence.py        redacted evidence packet
   explain.py, llm.py templates and the optional LLM layer
@@ -372,6 +439,8 @@ src/bharosa/
   cli.py, ui.py      Typer + Rich CLI
 samples/             synthetic QR images, messages, a chat export and the labeled corpus
 tests/               pytest suite
+android/             Kotlin Android app (scan, verdict, UPI hand-off, guardian review, share target)
+scripts/             sample QR generator and the Android test fixture writer
 ```
 
 ## Limitations
@@ -383,6 +452,7 @@ tests/               pytest suite
 - Hindi and Kannada keywords and translations were written by the team and should be reviewed by native speakers.
 - The PSP handle list and brand allowlist are small demo lists.
 - The chat bots were tested against mocked Telegram and Meta APIs, not live accounts. Telegram groups are not supported. WhatsApp outside the 24-hour customer-service window needs approved message templates, which are not built. The bot cannot see or block a payment made in another app.
+- The Android app was built and unit-tested on this laptop, not yet run end to end on a phone with a real UPI app. It cannot stop a payment the parent starts from another app's own scanner; it only checks what reaches Bharosa. Guardians in the app see new cases by polling while the app is open (no push notifications yet; the bots push).
 
 ## Sources and references
 

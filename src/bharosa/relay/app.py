@@ -9,6 +9,9 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import threading
+import time
+from collections import defaultdict, deque
 from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
@@ -16,6 +19,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from .. import __version__
+from ..appcheck import check_for_app
 from ..service import FamilyService, ServiceError
 from ..store import Store
 
@@ -58,6 +62,15 @@ class Stop(BaseModel):
     incident_at: float | None = None
 
 
+class CheckRequest(BaseModel):
+    content: str = Field(min_length=1, max_length=8 * 1024)
+    kind: str = Field(default="auto", pattern="^(auto|qr|url|msg)$")
+    lang: str = Field(default="en", pattern="^(en|hi|kn)$")
+
+
+ANON_CHECKS_PER_HOUR = 60  # per client address, for checks made without a token
+
+
 class Approval(BaseModel):
     ttl_seconds: int = Field(default=1800, ge=60, le=24 * 3600)
 
@@ -78,7 +91,27 @@ def create_app(service: FamilyService | None = None) -> FastAPI:
             raise HTTPException(status_code=401, detail="missing bearer token")
         return authorization.split(" ", 1)[1].strip()
 
+    def optional_token(authorization: str | None = Header(default=None)) -> str | None:
+        if not authorization:
+            return None
+        if not authorization.lower().startswith("bearer "):
+            raise HTTPException(status_code=401, detail="malformed bearer token")
+        return authorization.split(" ", 1)[1].strip() or None
+
     svc = service
+    anon_hits: dict[str, deque] = defaultdict(deque)
+    anon_lock = threading.Lock()
+
+    def allow_anon(client: str) -> bool:
+        now = time.time()
+        with anon_lock:
+            q = anon_hits[client]
+            while q and q[0] < now - 3600:
+                q.popleft()
+            if len(q) >= ANON_CHECKS_PER_HOUR:
+                return False
+            q.append(now)
+            return True
 
     @app.get("/health")
     def health() -> dict:
@@ -139,6 +172,16 @@ def create_app(service: FamilyService | None = None) -> FastAPI:
                 raise HTTPException(status_code=422, detail=f"missing field {key}")
         body.pop("raw_content", None)  # raw content never goes to the relay
         return svc.submit_case(t, body)
+
+    @app.post("/check")
+    def check(body: CheckRequest, request: Request, t: str | None = Depends(optional_token)) -> dict:
+        """Run the deterministic checks on raw input and, for a parent, queue the masked case.
+
+        The raw content is used in memory for the check and is not stored (see bharosa.appcheck).
+        """
+        if t is None and not allow_anon(request.client.host if request.client else "unknown"):
+            raise HTTPException(status_code=429, detail="too many checks; pair the app with a family")
+        return check_for_app(svc, t, body.content, body.kind, body.lang)
 
     @app.get("/cases")
     def list_cases(state: list[str] | None = Query(default=None), limit: int = 50,

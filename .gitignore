@@ -10,3 +10,5 @@ dist/
 bharosa-home/
 evidence/
 *.db
+*.db-wal
+*.db-shm

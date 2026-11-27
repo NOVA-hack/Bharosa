@@ -1,0 +1,30 @@
+{
+  "case_id": "case_5f750c6fa7",
+  "input_type": "qr",
+  "risk_level": "low",
+  "score": 10,
+  "ruleset_version": "qr-2026.11.1+url-2026.11.1+playbook-2026.11.1#c89b3402",
+  "headline": "No known warning signs found",
+  "reasons": [
+    {
+      "rule_id": "QR-FIRST-PAYEE",
+      "severity": "low",
+      "text": "This is the first payment to this payee from your family",
+      "evidence": "sh***@okaxis"
+    }
+  ],
+  "truth_cards": [],
+  "disclaimer": "This means Bharosa's checks did not find a known warning pattern. It does not prove the request is safe.",
+  "mask_summary": "1 upi_id",
+  "payee_masked": "sh***@okaxis",
+  "amount": 60.0,
+  "is_payment": true,
+  "input_sha256": "963d5468f86bd6fcc6d5d84a0e622a44c5dba257a8bca7ba622f679ba0d45022",
+  "ask_code_word": false,
+  "code_word_prompt": null,
+  "state": "allowed",
+  "action": "proceed",
+  "message": null,
+  "approval": null,
+  "guardians_notified": null
+}

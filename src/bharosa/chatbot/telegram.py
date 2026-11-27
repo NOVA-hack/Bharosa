@@ -123,6 +123,8 @@ def poll_once(bot: ChatBot, transport: TelegramTransport, offset: int | None, ti
                 bot.handle(ev)
         except TelegramError as exc:
             log.warning("%s", exc)
+        except Exception as exc:  # one bad update must not stop the bot or be replayed forever
+            log.warning("update %s failed: %s", update.get("update_id"), type(exc).__name__)
     return offset
 
 
@@ -135,7 +137,8 @@ def run_polling(bot: ChatBot, transport: TelegramTransport, stop: Callable[[], b
         try:
             offset = poll_once(bot, transport, offset)
             backoff = 1.0
-        except TelegramError as exc:
-            log.warning("%s; retrying in %.0fs", exc, backoff)
+        except Exception as exc:  # TelegramError or anything unexpected: keep polling
+            log.warning("%s; retrying in %.0fs", exc if isinstance(exc, TelegramError) else type(exc).__name__,
+                        backoff)
             time.sleep(backoff)
             backoff = min(backoff * 2, 60)

@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.Bharosa" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorPrimaryVariant">@color/brand_dark</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">@color/brand</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+    </style>
+</resources>

@@ -1,0 +1,60 @@
+{
+  "id": "case_3879c67f6e",
+  "family_id": "fam_b6d18bede6",
+  "parent_id": "usr_5b9ec47445",
+  "input_type": "qr",
+  "masked_content": "upi://pay?pa=<UPI:7cdec230>@okhdfcbank&pn=SBI Rewards&am=4999&tn=receive cashback",
+  "input_sha256": "2bd46bbb6b79ce3a94e56d9681cded2f0ea53fe1442a5cb3d2845ebbf804ea57",
+  "payee_hash": "7cdec230b3a87cf01702903a59d3772b",
+  "payee_masked": "re***@okhdfcbank",
+  "amount": 4999.0,
+  "risk_level": "high",
+  "score": 100,
+  "state": "held",
+  "created_at": 1795639604.6691213,
+  "updated_at": 1795639604.6701698,
+  "reasons": [
+    {
+      "rule_id": "QR-RECEIVE-MONEY",
+      "severity": "high",
+      "title": "The note promises you money, but scanning a QR never gives you money",
+      "evidence": "note says 'receive'",
+      "truth_card": "TC-QR-NEVER-RECEIVE",
+      "tool": "inspect_upi_qr"
+    },
+    {
+      "rule_id": "QR-AUTHORITY-NAME",
+      "severity": "medium",
+      "title": "The payee name claims to be a bank, government body or brand",
+      "evidence": "payee name contains 'sbi'",
+      "truth_card": null,
+      "tool": "inspect_upi_qr"
+    },
+    {
+      "rule_id": "QR-FIRST-PAYEE-HIGH-AMOUNT",
+      "severity": "medium",
+      "title": "First payment to this payee, and the amount is above your family's review limit",
+      "evidence": "amount 4999 > limit 2000",
+      "truth_card": null,
+      "tool": "inspect_upi_qr"
+    }
+  ],
+  "verdicts": [
+    {
+      "tool": "inspect_upi_qr",
+      "risk_level": "high",
+      "score": 100,
+      "ruleset_version": "qr-2026.11.1+url-2026.11.1+playbook-2026.11.1#c89b3402"
+    }
+  ],
+  "approval": {
+    "approval_id": "apr_cf574cb435",
+    "case_id": "case_3879c67f6e",
+    "status": "pending",
+    "case_state": "held",
+    "expires_at": 1795641404.6701698,
+    "decided_at": null,
+    "note": null
+  },
+  "parent_name": "Amma"
+}

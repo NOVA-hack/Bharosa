@@ -40,7 +40,12 @@ def decode_bytes(data: bytes) -> str:
     cv2, det = _detector()
     import numpy as np
 
-    img = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
+    if not data:
+        raise QRDecodeError("the file is empty")
+    try:
+        img = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
+    except cv2.error:
+        img = None
     if img is None:
         raise QRDecodeError("the file is not an image OpenCV can read")
     return decode_array(img)

@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "bharosa": {
-      "command": "C:\path\to\Bharosa\.venv\Scripts\bharosa.exe",
+      "command": "C:\\path\\to\\Bharosa\\.venv\\Scripts\\bharosa.exe",
       "args": ["mcp"],
       "env": { "BHAROSA_PROFILE": "amma" }
     }

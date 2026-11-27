@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Android 11+ package visibility: lets Bharosa see which UPI apps can open a upi:// link. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="upi" />
+        </intent>
+    </queries>
+
+    <!-- usesCleartextTraffic: the hackathon relay runs over plain HTTP on the laptop or LAN.
+         Put the relay behind HTTPS before using this anywhere real. -->
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_bharosa"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Bharosa"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="35">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Every check lands here: an in-app scan, a upi:// link opened from another app,
+             or text shared to Bharosa from WhatsApp, SMS or a browser. -->
+        <activity
+            android:name=".CheckActivity"
+            android:exported="true"
+            android:label="@string/check_with_bharosa"
+            android:parentActivityName=".MainActivity">
+            <intent-filter android:label="@string/check_with_bharosa">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="upi" />
+            </intent-filter>
+            <intent-filter android:label="@string/check_with_bharosa">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SetupActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ReviewActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Let the scanner follow the phone's orientation instead of forcing landscape. -->
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="screenOrientation" />
+    </application>
+</manifest>

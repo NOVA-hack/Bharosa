@@ -1,0 +1,58 @@
+{
+  "case_id": "case_3879c67f6e",
+  "input_type": "qr",
+  "risk_level": "high",
+  "score": 100,
+  "ruleset_version": "qr-2026.11.1+url-2026.11.1+playbook-2026.11.1#c89b3402",
+  "headline": "Stop: this looks like a scam",
+  "reasons": [
+    {
+      "rule_id": "QR-RECEIVE-MONEY",
+      "severity": "high",
+      "text": "The note promises you money, but scanning a QR never gives you money",
+      "evidence": "note says 'receive'"
+    },
+    {
+      "rule_id": "QR-AUTHORITY-NAME",
+      "severity": "medium",
+      "text": "The payee name claims to be a bank, government body or brand",
+      "evidence": "payee name contains 'sbi'"
+    },
+    {
+      "rule_id": "QR-FIRST-PAYEE-HIGH-AMOUNT",
+      "severity": "medium",
+      "text": "First payment to this payee, and the amount is above your family's review limit",
+      "evidence": "amount 4999 > limit 2000"
+    }
+  ],
+  "truth_cards": [
+    {
+      "id": "TC-QR-NEVER-RECEIVE",
+      "text": "You never need to scan a QR code or enter your UPI PIN to RECEIVE money.",
+      "source": "NPCI fraud awareness",
+      "url": "https://www.npci.org.in/fraud-awareness"
+    }
+  ],
+  "disclaimer": "Do not pay, do not share any OTP or PIN, and do not install any app.",
+  "mask_summary": "1 upi_id",
+  "payee_masked": "re***@okhdfcbank",
+  "amount": 4999.0,
+  "is_payment": true,
+  "input_sha256": "2bd46bbb6b79ce3a94e56d9681cded2f0ea53fe1442a5cb3d2845ebbf804ea57",
+  "ask_code_word": false,
+  "code_word_prompt": null,
+  "state": "held",
+  "action": "hold",
+  "message": "Bharosa has paused this payment and asked your family to review it.",
+  "approval": {
+    "approval_id": "apr_cf574cb435",
+    "case_id": "case_3879c67f6e",
+    "status": "pending",
+    "case_state": "held",
+    "expires_at": 1795641404.6701698,
+    "decided_at": null,
+    "note": null,
+    "guardians_notified": 1
+  },
+  "guardians_notified": 1
+}
